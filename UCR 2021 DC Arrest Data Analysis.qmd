@@ -14,6 +14,10 @@ format:
       smooth-scroll: true
       link-external-icon: true
       link-external-newwindow: true
+    pdf:
+      toc: false
+      fig-cap-location: bottom
+      prefer-html: true
 execute:
   warning: false
   message: false
@@ -21,6 +25,11 @@ execute:
 
 
 ![Source:  FBI UCR Program NIBRS Page](NIPRS.JPG)
+
+This series is published by Towards AI On Medium.
+- Part I: [Link](https://medium.com/towards-artificial-intelligence/fostering-criminal-justice-with-data-science-part-i-be4cabdeb0a1).
+- Part II: 
+- Part III:
 
 As a crime researcher, I am always intrigued by the questions of how many crimes were committed in a year and out of these crimes, how many arrests were made by officers. I explicitly mentioned arrests here because these two concepts are distinct in the sense that not all crimes resulted in an arrest. Most cases simply do not amount to the level of seriousness needed to validate an arrest for which should our attention is on behavioral biases of law enforcement agents (racial discrimination in policing), arrest usually is often a better metric.
 
@@ -115,7 +124,7 @@ Going back to our data, we need to do a few things before the most exciting part
 
 Out of these 21 variables, we found out `arrest_id`, `incident_id`, `arrestee_sql_num` are all used to identify arrests/arrestees, and variables `age_id`, `age_num`, `under_18_disposition_code`, `age_range_low_num`, `age_range_high_num` all represent arrestees' age (we have the variable variation here because juveniles go through a different prosecution system and are often coded divergently from adults to protect their privacy). Moreover, there are a few variables that are out of the bond of our topic and thus, filtered out. 
 
-It turns out that we only kept 8 variables. I have also renamed these variables so that their names are more reflective of what they mean.   
+It turns out that we only kept 8 variables. I also renamed these variables so that their names are more reflective of what they represent.   
 ```{r}
 dc21 <- dc21_arrests_weapon %>%
   select(data_year.x, arrest_date, arrest_type_id, offense_code, 
@@ -134,7 +143,7 @@ dc21 <- dc21_arrests_weapon %>%
 ### Variable Manipulation
 Now, noticed that `race`, `arrest_type`, and `weapon` are labelled numerically, which is a common practice in data entry. However, it's hard to know what each number means without referencing the codebook. Therefore, let's do some recoding, starting from variable `race`.
 
-Through some simple manipulations, we found race has 6 categories with categories 30, 40, 50 having under 20 arrest cases. Because their numbers are so small comparing to other racial groups, we can combine them together. Category 98 represents arrestees whose racial information is unknown, either because the officer forgot to write it down (it happens!) or for some other reason and is dropped out.  
+Through some simple manipulations, we found race has 6 categories with categories 30, 40, 50 having under 20 arrest cases. Because their numbers are so small comparing to other racial groups, we can combine them together. Category 98 represents arrestees whose racial information is unknown, either because the officer forgot to write it down (it happens!) or for some other reasons. I dropped out this category.  
 
 I am using functions from the **forcats** package to simplify the task.
 ```{r}
@@ -210,7 +219,7 @@ dc21 <- dc21 %>%
 ```
 
 
-The rest of few variables are a little bit tricky here. For `date`, it makes little sense to know on which date arrests occurred but instead, knowing the months could provide some insights. Since `date` is in its own type (by default, R makes all date/time-related variables in POSIXIt format), we use functions from the `lubridate` package to make the transformation.
+The remaining variables are a little bit tricky here. For `date`, it makes little sense to know on which date arrests occurred but instead, knowing the months could provide some insights. Since `date` is in its own type (by default, R makes all date/time-related variables in POSIXIt format), we use functions from the `lubridate` package to make the transformation.
 
 ```{r}
 dc21 <- dc21 %>%
@@ -270,11 +279,95 @@ dc21 %>%
 
 Full code can be found on my [Github repo](https://github.com/jcvincentliu/data-blogging/blob/main/UCR%202021%20DC%20Arrest%20Data%20Analysis.qmd).
 
-In the next section, we will focus on using the tool of explorative data analysis(EDA) to inspect our data and answer the questions I posed at the beginning of this post. We will also talk about data storytelling - the art of using data to narrate a story. Stay tuned!
+In the next section, we will focus on using the tool of explorative data analysis(EDA) to inspect our data and answer the questions I posed at the beginning of this post. We will also talk about data storytelling - the art of using data to narrate a story. Stay tuned!
 
 
-## Explorative Data Analysis: Who Were Arrested?
+## Explorative Data Analysis
 
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven methods may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because of the involvement of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, whe, and how" to narrate the data story.  ## An Analysis Continued 
+
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, when and how" to narrate the data story.## An Analysis Continued 
+
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, when and how" to narrate the data story.   
+
+
+## A Broad Picture of Arrests in DC - The "Who" Piece
+
+In the United States, a striking number of arrests happened annually. As estimated by one of the most famous think tanks [Vera Institute of Justice](https://www.vera.org/publications/arrest-trends-every-three-seconds-landing/arrest-trends-every-three-seconds/findings), in any given year, police officers made around 10.5 million arrests. Although the number has somehow come down since 2006 because of a rise of social movements that led to reforms in the criminal justice system and other social changes, such as the prevalence of surveillance cameras that deterred people from committing some low-level property offenses, notably, theft, this number is still high. On a comparative scale, this could be equivalent to a small country's population. As [a myriad of studies](https://www.sentencingproject.org/publications/un-report-on-racial-disparities/) have suggested, the burden disproportionately falls on racial minorities and people in marginal social groups. Are all these arrests necessary? What's the story behind this giant volume of arrests? Let's take a look.  
+
+Since the scope of our analysis is in DC, we may not generalize our findings to other states/areas where the situations and policies are distinct. Additionally, a number of factors contributed to arrests. We will only look at a few of them because of the limit of our data. 
+
+Like last time, we start with loading all the libraries. This is like getting coffee and tea ready to prepare for a friend's visit.
+```{r setup}
+#| code-fold: false
+
+library(tidyverse) # use the tidyverse universe
+library(ggtext) # format texts/annotations in ggplots
+library(GGally) # for more visualization options
+library(ggpubr) # dot chart and plot arrangement
+library(kableExtra) # format tables
+library(gt) # for goog looking table 
+library(waffle) #waffle chart
+library(extrafont) # not used: this is for changing the glyph in waffle plots
+library(fontawesome) #  for changing the glyph in waffle plots
+
+load("data/final_data.rda")
+```
+
+
+### By race
+
+In the year 2021, law enforcement agents in DC arrested a total of `r nrow(dc21)` people (note: I am not using the term "MPD officers" here because the DC data also came from a variety of agencies, for instance, the Capitol Police). For a city with less than 1 million residents (the most), this is roughly one in 160 people.  
+
+As illustrated by the waffle plot in the figure below, the absolute majority of arrestees in these 4380 cases was African Americans. Around `r round(3978/4380, 4)*100` percent of people who were arrested in DC in the year 2021 were African Americans, while the size of White arrestees was 10 times smaller. According to the [2021 Census data](https://www.census.gov/quickfacts/DC), 45% of DC residents, or 300,000 people were Blacks. That is to say, approximately 1 out of 78 Blacks were at least arrested once in DC in 2021. Considering a series of socioeconomic consequences an arrest may bring, the disproportionality may promote  institutionalization and perpetuate systematic racism in the city. But before we make any conclusion, we shall further look at our data.   
+
+```{r}
+dc21 <- dc21 %>%
+  mutate(race_new = fct_lump_n(race, 
+                               n = 2, 
+                               other_level = "Other races")) 
+dc21 %>%
+  count(race_new) %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = race_new
+  ) %>%
+   cols_label(
+    race_new = "Race",
+    n = "Count"
+  )
+```
 ```{r}
 #| label: line-graph-by-race
 #| fig-cap: Blacks were 8 more times more likely to be arrested than other racial groups in 2021
