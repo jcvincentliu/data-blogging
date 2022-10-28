@@ -1,0 +1,440 @@
+---
+title: "In the Dark Aisles of Our Capital (Part II)"
+subtitle: "A Data-driven Analysis of the UCR 2021 DC Arrest Data"
+author: "Vincent Liu"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+format: 
+    html:
+      toc: true
+      toc-title: "Table of Contents"
+      code-fold: true
+      code-tools: true
+      smooth-scroll: true
+      link-external-icon: true
+      link-external-newwindow: true
+
+execute:
+  warning: false
+  message: false
+---
+
+## An Analysis Continued 
+
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven methods may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because of the involvement of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, whe, and how" to narrate the data story.  ## An Analysis Continued 
+
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, when and how" to narrate the data story.## An Analysis Continued 
+
+In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
+
+Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
+
+1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
+
+2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
+
+3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
+
+We will be following a framework of "who did what, when and how" to narrate the data story.   
+
+
+## A Broad Picture of Arrests in DC - The "Who" Piece
+
+In the United States, a striking number of arrests happened annually. As estimated by one of the most famous think tanks [Vera Institute of Justice](https://www.vera.org/publications/arrest-trends-every-three-seconds-landing/arrest-trends-every-three-seconds/findings), in any given year, police officers made around 10.5 million arrests. Although the number has somehow come down since 2006 because of a rise of social movements that led to reforms in the criminal justice system and other social changes, such as the prevalence of surveillance cameras that deterred people from committing some low-level property offenses, notably, theft, this number is still high. On a comparative scale, this could be equivalent to a small country's population. As [a myriad of studies](https://www.sentencingproject.org/publications/un-report-on-racial-disparities/) have suggested, the burden disproportionately falls on racial minorities and people in marginal social groups. Are all these arrests necessary? What's the story behind this giant volume of arrests? Let's take a look.  
+
+Since the scope of our analysis is in DC, we may not generalize our findings to other states/areas where the situations and policies are distinct. Additionally, a number of factors contributed to arrests. We will only look at a few of them because of the limit of our data. 
+
+Like last time, we start with loading all the libraries. This is like getting coffee and tea ready to prepare for a friend's visit.
+```{r setup}
+#| code-fold: false
+
+library(tidyverse) # use the tidyverse universe
+library(ggtext) # format texts/annotations in ggplots
+library(GGally) # for more visualization options
+library(ggpubr) # dot chart and plot arrangement
+library(kableExtra) # format tables
+library(gt) # for goog looking table 
+library(waffle) #waffle chart
+library(extrafont) # not used: this is for changing the glyph in waffle plots
+library(fontawesome) #  for changing the glyph in waffle plots
+
+load("data/final_data.rda")
+```
+
+
+### By race
+
+In the year 2021, law enforcement agents in DC arrested a total of `r nrow(dc21)` people (note: I am not using the term "MPD officers" here because the DC data also came from a variety of agencies, for instance, the Capitol Police). For a city with less than 1 million residents (the most), this is roughly one in 160 people.  
+
+As illustrated by the waffle plot in the figure below, the absolute majority of arrestees in these 4380 cases was African Americans. Around `r round(3978/4380, 4)*100` percent of people who were arrested in DC in the year 2021 were African Americans, while the size of White arrestees was 10 times smaller. According to the [2021 Census data](https://www.census.gov/quickfacts/DC), 45% of DC residents, or 300,000 people were Blacks. That is to say, approximately 1 out of 78 Blacks were at least arrested once in DC in 2021. Considering a series of socioeconomic consequences an arrest may bring, the disproportionality may promote  institutionalization and perpetuate systematic racism in the city. But before we make any conclusion, we shall further look at our data.   
+
+```{r}
+dc21 <- dc21 %>%
+  mutate(race_new = fct_lump_n(race, 
+                               n = 2, 
+                               other_level = "Other races")) 
+dc21 %>%
+  count(race_new) %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = race_new
+  ) %>%
+   cols_label(
+    race_new = "Race",
+    n = "Count"
+  )
+```
+
+```{r}
+#| label: race-waffle-chart
+
+# font_import()
+# loadfonts(device = "win")
+
+
+p_waffle<- waffle(
+  c(Black = 40, White = 4, `Other Race` = 1), 
+  rows = 4, size = 1.5,
+     #      use_glyph = "male", glyph_size = 6, 
+  colors = c("#12719e", "#cfe8f3", "#ececec"),
+  title = "African Americans represented 90% of over 4k arrests made by\n police officers in DC in 2021",
+  legend_pos = "top", 
+  equal = FALSE) +
+     theme(
+       plot.caption = element_text(size = 12),
+       plot.title = element_text(size=15, face='bold')) +
+     labs(caption = "Note: One square represents 100 arrestees. \n The 'other race' category is scaled up to fit the grid.")
+
+p_waffle
+```
+
+### By age and sex
+
+Understanding how ex-offenders transited out of their crime paths is important for crime prevention, gang regulation, and policy making. It is widely understood that age is an important factor in this transition. Most crimes were committed during adolescence, and as people get more matured and their brains are further developed (humans' brains are not fully developed until 25), they also stopped their criminal behaviors. This is the idea of the [age-crime curve](https://www.jstor.org/stable/1147518), an important theory in life-course criminology, the subfield in which my undergraduate professor and mentor specializes. The theory said that for most people, criminal activities perked when they are under 20 and diminished as people aged. The trend generally stays true but the distribution may vary slightly based on crime types. For a lot of crimes, the perk age is the mid-20s rather than 15/16ish. (I have a lot of stories in this from my experience doing restorative justice, but that is out of the scope of this post)
+
+Arrests usually do follow the same pattern. A [Vera study](https://arresttrends.vera.org/demographics) found that age 25-39 is the single highest age-group of all arrests. For [violent crimes](https://www.prisonpolicy.org/graphs/agecrimecurve.html), the arrest rates peaks for people in age 20-24. Although these studies scoped on the police arrest from a national perspective for which the same can not be spoken to DC, they showcase one important point: the age-arrest curve and the age-crime curve may overlap but they certainly do not overlay. 
+
+It turns out that the DC-specific age-arrest curve is actually deviant from the general case described in the last paragraph. As we are able to tell from the box plot below, for both male and female arrestees, 30-39 was the age group that most arrests fell into, closely followed by the age group 20-29. Moreover, under 20 is the age group with the fewest number. This may be caused by law enforcement officers adopting another system for juveniles to protect their privacy. In a lot of states, juvenile information is confidential and only accessible to a handful of agencies (this may not apply to our data, given that UCR is collected by the FBI). More importantly, the reason could be there are not as many adolescents living in the state as adults. DC is special in the sense that it is a special district, not a state. As the political center of the nation, many people work in DC but do not live here. However, the specific reasons why both distributions have such a shape shall need future research. We should also note that both distributions are right-skewed, which occurred when the mean of a group is larger than its median. With a positive skewness, many hypothesis are no longer valid and some transformations may be required, should hypothesis testing is the next step.  
+
+Broken down by sex, the size of male arrestees is three to four times larger than female arrestees. Given most offenders are males, this is unsurprising. It would be interesting to compare this to the sex of victims (important in victimology! NCVS/National Crime Victimization Survey is the expert dataset on this).
+
+```{r}
+dc21 %>%
+  group_by(sex, age_group) %>%
+  summarise(n = n()) %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = sex
+  ) %>%
+   cols_label(
+    sex = "Sex",
+    age_group = "Age Group",
+    n = "Count"
+  )
+```
+
+```{r}
+#| label: box-plot-by-sex
+
+
+p_m <-dc21 %>%
+  filter(sex == "Male") %>%
+  group_by(age_group) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = age_group, y = count)) +
+  geom_col(fill = "#12719e") +
+  labs(x = "Male", 
+       y = "") +
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 1200), 
+                     breaks = seq(0, 1200, 200))+ 
+  geom_text(mapping = aes(label = count), vjust = -1)+
+  theme_classic() +
+  theme(
+    panel.grid.major.y = element_line(),
+    axis.line.y = element_blank()
+  )  
+
+p_f <- dc21 %>%
+  filter(sex == "Female") %>%
+  group_by(age_group) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = age_group, y = count)) +
+  geom_col(fill = "#af1f6b") +
+  labs(x = "Female", 
+       y = "") +
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 400), 
+                     breaks = seq(0, 400, 100))+ 
+  theme_classic() +
+  theme(
+    panel.grid.major.y = element_line(),
+    axis.line.y = element_blank()
+  ) +
+  geom_text(mapping = aes(label = count), vjust = -1) 
+
+p_sex <- ggarrange(p_m, p_f, ncol = 2) 
+annotate_figure(p_sex, top = text_grob("Regardless of sex, 30-40 was the most arrested age group in DC in 2021", size= 12)) #%>%
+#  ggexport(filename = "graph/age_bar_chart.png", 
+  #         height = 600, width = 900)
+```
+
+
+## Arrests Are Relentless Throughout the Year? - The "When" Piece
+
+As human beings, we are naturally curious about the trend: how has the US GDP in the last decade? Are crime rates going up or down? In fact, there is hardly any criminology student who did not learn about the downward trend of crime in their classes. From the angle of crime prevention, knowing about the "time" is also of great significance: we need to know when crimes happened to assign police officers and make other arrangements. A lot of crimes are time-sensitive. For example, you can't imagine a bunch of young juveniles going out to the street and starting a gang fight on a snow day when the temperature is too cold to even hold a gun. I remember when I rode along with a Sergeant in the Minneapolis Police Department in my freshman year of college, the officer showed to me the location where a local gang met and said: "This place is not as peaceful as you are seeing in the summer". His words shed light on the time nature of gang crimes. 
+
+I used a line chart to show the arrest frequency over 2021. Out of my expectation, arrests concentrated in the later summer and autumn of the year. Specifically, the arrest number in August was SEVEN times larger than the statistics of July. To put this into sense, the number of African American residents MPD officers arrested in August was approximately the sum of the number from January to July in total. The trend continued until the end of the year. 
+
+This is very different from what I imagined the curve would look like. I am interested in knowing if there is a reason that caused the spike in August. Is the weather to blame for it? Or is it because of a policy or social event in DC? These questions are left uninvestigated in this post but I may turn back to them in another one.
+```{r}
+#| label: line-graph-by-race
+
+line_chart_label <- "Racial divide in arrest numbers <br>expanded in the second half of 2021.<br> Between August and December,<br>  over <span style='color:darkred'>**600**</span> African Americans<br> were arrested, while the <br>number for Whites was just <br>slightly over 70, an eight-time gap."
+
+dc21 %>%
+  group_by(race, month) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = month, y = count, group= race)) +
+  geom_line(aes(color = race), size = 1.5) +
+  theme_classic() +
+  theme(
+        legend.position="top", 
+          legend.direction = "horizontal") +
+  labs(x = "", y = "", color = "", 
+       caption = "Source: 2021 Uniform Crime Report data") +
+  ggtitle("Criminal Arrests Concentrated in the Second Half of the Year") +
+  scale_color_manual(values=c("#e88e2d", "#408941", "#d2d2d2", "#12719e")) +
+  scale_y_continuous(expand = c(0, 20),
+                     limits = c(0,720),
+                     breaks = seq(0,700,100)) +
+  ggtext::geom_richtext(aes(x = 10, y = 360,
+    label = line_chart_label),
+    size = 3.5, fill = NA, label.color = NA, family = "serif") +
+  annotate(
+    geom = "curve", x = 9, y = 520, xend = 8.2, yend = 640, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) 
+```
+
+
+## Weapon Is the Culprit? - The "How" Piece
+
+### By Offense
+```{r}
+dc21 %>%
+  group_by(offense) %>%
+  summarise(count = n()) %>%
+  mutate(`Percent (%)` = round(count/sum(count)*100,2)) %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = offense
+  ) %>%
+   cols_label(
+    offense = "Offense",
+    count = "Count"
+  ) %>%
+  tab_row_group(
+    label = "Other Crimes",
+    rows = 11:12
+  )  %>%
+  tab_row_group(
+    label = "Peoperty Crime/ Crime Against Property",
+    rows = 7:10
+  )  %>%
+   tab_row_group(
+    label = "Violent Crime/ Crime Against Person",
+    rows = 1:6
+  ) %>%
+    tab_options(
+      column_labels.border.top.width = px(3),
+      column_labels.border.top.color = "transparent",
+      table.border.top.color = "transparent",
+      table.border.bottom.color = "transparent",
+      data_row.padding = px(3),
+      source_notes.font.size = 12,
+      heading.align = "left",
+      #Adjust grouped rows to make them stand out
+      row_group.background.color = "#e3e3e3") %>%
+  tab_style(
+     locations = cells_column_labels(columns = everything()),
+     style  = list(
+       cell_borders(sides = "bottom", weight = px(3)),
+       cell_text(weight = "bold")
+     )
+   )
+
+```
+
+```{r}
+#| label: offense-bar-chart
+
+dc21 %>%
+  group_by(offense) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = offense, y = count)) +
+  geom_col(fill = "#12719e") +
+  coord_flip() +
+  scale_x_discrete(limits=rev) +
+  theme_classic() +
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 2200), 
+                     breaks = c(0,100,
+                                seq(250, 2000, 250), 4500)) +
+  theme(
+ #   text = element_text(family = "sans"), #other default fonts aren't good for web
+    title =element_text(size=11, face='bold'),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_line(),
+    axis.line.y = element_line(),
+    axis.line.x = element_blank()
+  ) + 
+  labs(x = "", y = "",
+       caption = "Source: 2021 Uniform Crime Report data") +
+  geom_vline(xintercept = 2.5,
+             colour = "red", size = 1.5) +
+  annotate("text", y = 1000, x = 1.5, 
+           label = "Other Crimes", color = "#af1f6b") +
+  geom_vline(xintercept = 6.6, 
+             colour = "red", size = 1.5) +
+  annotate("text", y = 1000, x = 10, 
+           label = "Violent Crimes", color = "#af1f6b") +
+  annotate("text", y = 1000, x = 5, 
+           label = "(Violent) Property Crimes",
+           color = "#af1f6b") +
+  ggtitle("Arrests in DC Area by Offense Type in 2021")
+```
+
+
+### By Weapon
+```{r}
+dc21 %>%
+  count(race, weapon) %>%
+  filter(race == "Black or African American") %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = race
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = weapon
+  ) %>%
+   cols_label(
+    n = "Count",
+    weapon = "Weapon",
+    race = "Race"
+  )
+
+dc21 %>%
+  count(race, weapon) %>%
+  filter(race == "White") %>%
+  gt() %>%
+  cols_align(
+    align = "left",
+    columns = race
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = weapon
+  ) %>%
+   cols_label(
+    n = "Count",
+    weapon = "Weapon",
+    race = "Race"
+  )
+```
+
+```{r}
+#| label: weapon-bar-chart
+
+p_weapon <- dc21 %>%
+  mutate(weapon = fct_rev(weapon)) %>%
+  group_by(race_new, weapon) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = race_new, y = count, fill = weapon)) +
+  geom_col(position = "fill", width = .8) +
+  coord_flip() +
+  labs(title = "A higher proportion of African Americans were arrested\n  for firearm-related crimes than other races in DC",
+       caption = "Source: 2021 Uniform Crime Report data",
+      y = "",
+       x = "") +
+  theme_classic() +
+  theme(
+    title =element_text(size=10, face='bold'),
+    axis.line.x = element_blank(),
+    panel.grid.major.x = element_line(color = "gray60", 
+                                            size = 0.6,
+                                            linetype = "solid")) +
+  scale_x_discrete(limits = rev, 
+                   labels = c("Other Races", 
+                              "Blacks or African\nAmericans", 
+                              "Whites")) +
+  scale_y_continuous(expand = c(0,0),
+                     breaks = seq(0,1,.2),
+                     labels = scales::percent)  +
+  guides(fill = guide_legend(title = NULL)) +
+  scale_fill_manual(values=c("#e46aa7", "#46abdb", "#d2d2d2"))
+
+p_weapon
+```
+
+
+## From EDA to Statistical Modeling 
+
+### Generalized Linear Regression 
+
+A generalized linear model with a binomial link function follows the equation $$log(\frac{\pi_i}{1-\pi_i}) = \beta_0 + \beta_1 x_i$$
+
+```{r}
+dc21_mod <-dc21 %>%
+  group_by(race, weapon, sex, age_group) %>%
+  summarise(count = n()) 
+
+mod <- glm(weapon~ race + age + sex, family = "binomial",
+           data = dc21)
+
+summary(mod) 
+```
+
+
+## At the End 
+
+Data doesn't imply objectivity. Statistics are commonly misused by politicians to support their propaganda. For example, people may rational the fact that officers arrested more Black people than any other racial groups in DC as Black people are more violent in nature. However, people who say that often failed to grasp the broader pictures behind those numbers: Compared to Whites and Asians, Black people are more likely to live in segregated and low-income areas, experience violence on daily basis, receive less support from the government, go to under-resourced schools, and be harmed by systematic racism. Crime is complex. A lot of factors could drive crimes. Behind those crime statistics are stories, people's stories, many of which are tragedies. Data science does not always bring cures to problems. It could be but the prerequisite of that is we treat data with an objective eye and interpret our results with the maximum extent of cautiousness. It's easy to make conclusions but words can harm. The real purpose of data science is that it helps us recognize the "what", which is the basic of any policy change.   
+
+```{r, include = FALSE}
+# ggsave(filename = "graph/weapon_stacked_bar_chart.png",
+#        plot = p_weapon, 
+#        width = 8, 
+#        height = 6)
+
+# ggsave(filename = "graph/race_waffle_chart.png",
+#         plot = p_waffle, 
+#         width = 8, 
+#         height = 6)          
+```
+
