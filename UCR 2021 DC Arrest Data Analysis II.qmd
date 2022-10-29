@@ -31,32 +31,7 @@ Therefore, in this post, I will primarily use `ggplot` to create visualizations 
 
 3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
 
-We will be following a framework of "who did what, whe, and how" to narrate the data story.  ## An Analysis Continued 
-
-In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
-
-Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
-
-1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
-
-2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
-
-3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
-
-We will be following a framework of "who did what, when and how" to narrate the data story.## An Analysis Continued 
-
-In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven method may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 
-
-Therefore, in this post, I will primarily use `ggplot` to create visualizations and explain them with subject knowledge. That is to say, this post will focus on data storytelling - the real art of data science. Our narration will center around the three questions we posed in the first blog of this series, namely, (slightly modified)
-
-1. How does the police power of arrest disproportionately affect different socioeconomic and racial groups? 
-
-2. Does Metropolitan Police Officers arrest someone primarily because the inclusion of force?
-
-3. What did these arrestees do that triggered the arrest? (Remember, arrest needs a high level of reasonableness. In the criminal justice system, the deeper an act will invade a citizen's privacy, the stronger the rationale will be needed to justify the law enforcement agent's behavior)
-
-We will be following a framework of "who did what, when and how" to narrate the data story.   
-
+We will be following a framework of "who did what, when, and how" to narrate the data story. 
 
 ## A Broad Picture of Arrests in DC - The "Who" Piece
 
@@ -206,9 +181,11 @@ annotate_figure(p_sex, top = text_grob("Regardless of sex, 30-40 was the most ar
 
 As human beings, we are naturally curious about the trend: how has the US GDP in the last decade? Are crime rates going up or down? In fact, there is hardly any criminology student who did not learn about the downward trend of crime in their classes. From the angle of crime prevention, knowing about the "time" is also of great significance: we need to know when crimes happened to assign police officers and make other arrangements. A lot of crimes are time-sensitive. For example, you can't imagine a bunch of young juveniles going out to the street and starting a gang fight on a snow day when the temperature is too cold to even hold a gun. I remember when I rode along with a Sergeant in the Minneapolis Police Department in my freshman year of college, the officer showed to me the location where a local gang met and said: "This place is not as peaceful as you are seeing in the summer". His words shed light on the time nature of gang crimes. 
 
+### By race
+
 I used a line chart to show the arrest frequency over 2021. Out of my expectation, arrests concentrated in the later summer and autumn of the year. Specifically, the arrest number in August was SEVEN times larger than the statistics of July. To put this into sense, the number of African American residents MPD officers arrested in August was approximately the sum of the number from January to July in total. The trend continued until the end of the year. 
 
-This is very different from what I imagined the curve would look like. I am interested in knowing if there is a reason that caused the spike in August. Is the weather to blame for it? Or is it because of a policy or social event in DC? These questions are left uninvestigated in this post but I may turn back to them in another one.
+This is very different from what I imagined the curve would look like. I am interested in knowing if there is a reason that caused the spike in August. Is the weather to blame for it? Or is it because of a policy or social event in DC?
 ```{r}
 #| label: line-graph-by-race
 
@@ -240,201 +217,116 @@ dc21 %>%
 ```
 
 
-## Weapon Is the Culprit? - The "How" Piece
+### By offense type
 
-### By Offense
+The discovery drove me to break down arrests by different indicators in an attempt to find out if there is a specific factor that led to the change in the arrest rate. What I ended up knowing is that violent crime-induced arrests surged in August. The upward trend is also reflected in other types of crimes, namely, property crimes, crimes against persons, and drug crimes but not with this magnitude. Perhaps something happened, for example, more frequent gang activities, that led to people in DC being more violent? At this point, I am not sure about the answer but this is worth future investigation.
 ```{r}
-dc21 %>%
-  group_by(offense) %>%
-  summarise(count = n()) %>%
-  mutate(`Percent (%)` = round(count/sum(count)*100,2)) %>%
-  gt() %>%
-  cols_align(
-    align = "left",
-    columns = offense
-  ) %>%
-   cols_label(
-    offense = "Offense",
-    count = "Count"
-  ) %>%
-  tab_row_group(
-    label = "Other Crimes",
-    rows = 11:12
-  )  %>%
-  tab_row_group(
-    label = "Peoperty Crime/ Crime Against Property",
-    rows = 7:10
-  )  %>%
-   tab_row_group(
-    label = "Violent Crime/ Crime Against Person",
-    rows = 1:6
-  ) %>%
-    tab_options(
-      column_labels.border.top.width = px(3),
-      column_labels.border.top.color = "transparent",
-      table.border.top.color = "transparent",
-      table.border.bottom.color = "transparent",
-      data_row.padding = px(3),
-      source_notes.font.size = 12,
-      heading.align = "left",
-      #Adjust grouped rows to make them stand out
-      row_group.background.color = "#e3e3e3") %>%
-  tab_style(
-     locations = cells_column_labels(columns = everything()),
-     style  = list(
-       cell_borders(sides = "bottom", weight = px(3)),
-       cell_text(weight = "bold")
-     )
-   )
+#| label: offense-line-chart
 
+p_offense_by_time <- dc21 %>%
+  group_by(month, offense_group) %>%
+  summarise(count = n()) %>%
+  mutate(percent = round(count/sum(count), 4)) %>%
+  ggplot(aes(x = month, 
+             y = count, 
+             group = offense_group, 
+             color = offense_group)) +
+  geom_line(size = 1.5) +
+  theme_classic() +
+  theme(legend.position="none", 
+        axis.line.y = element_blank(),
+        axis.ticks.y  = element_blank(),
+        panel.grid.major.y = element_line(),
+        axis.text.x =  element_text(face="bold")
+     ) +
+  labs(x = "", y = "", 
+       title = "A sudden increase in violent crimes in Augus led to a spike of police arrests",
+       caption = "Source: 2021 Uniform Crime Report Data") +
+  scale_y_continuous(expand = c(0, 5),
+                     limits = c(0,550),
+                     breaks = seq(0,500,100)) +
+  annotate("text", y = 440, x = 11, 
+           label = "Violent Crimes", color = "black") +
+   annotate("text", y = 160, x = 11,  
+           label = "Property Crimes", color = "black") +
+  annotate("text", y = 20, x = 11, 
+           label = "Drug Crimes", color = "black") +
+  scale_color_manual(values=c("#12719e", "#e9807d", "#d2d2d2", "#73bfe2")) 
+  
+p_offense_by_time  
 ```
 
-```{r}
-#| label: offense-bar-chart
+### By Use of Weapon
 
-dc21 %>%
-  group_by(offense) %>%
+I also broke down the data by the use of weapons and found out that between July and August 2021, police arrests of unarmed civilians increased from 76 to 598, while firearm-involved arrests escalated from 2 to 121. This tells us that the spike in arrests spread between armed and unarmed cases. The use of guns does not explain the unexpected rising in criminal arrests. We may need to look for other reasons. From my perspective, I think the change is very likely provoked by an external incident. 
+
+(note: Weapon group "weapon with a blade" is removed from this comparison because of its relatively smaller size)
+```{r}
+
+#| label: filtered-weapon-bar-chart
+
+p_weapon_months <- dc21 %>%
+  filter(month %in% c("Jul", "Aug"),
+         weapon != c("Weapon with a blade")) %>%
+  group_by(month, weapon) %>%
   summarise(count = n()) %>%
-  ggplot(aes(x = offense, y = count)) +
-  geom_col(fill = "#12719e") +
-  coord_flip() +
-  scale_x_discrete(limits=rev) +
+  ggplot(aes(x = month, y = count)) +
+  geom_col(aes(fill = month), position = "dodge") +
   theme_classic() +
-  scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 2200), 
-                     breaks = c(0,100,
-                                seq(250, 2000, 250), 4500)) +
-  theme(
- #   text = element_text(family = "sans"), #other default fonts aren't good for web
-    title =element_text(size=11, face='bold'),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.x = element_line(),
-    axis.line.y = element_line(),
-    axis.line.x = element_blank()
-  ) + 
   labs(x = "", y = "",
-       caption = "Source: 2021 Uniform Crime Report data") +
-  geom_vline(xintercept = 2.5,
-             colour = "red", size = 1.5) +
-  annotate("text", y = 1000, x = 1.5, 
-           label = "Other Crimes", color = "#af1f6b") +
-  geom_vline(xintercept = 6.6, 
-             colour = "red", size = 1.5) +
-  annotate("text", y = 1000, x = 10, 
-           label = "Violent Crimes", color = "#af1f6b") +
-  annotate("text", y = 1000, x = 5, 
-           label = "(Violent) Property Crimes",
-           color = "#af1f6b") +
-  ggtitle("Arrests in DC Area by Offense Type in 2021")
-```
-
-
-### By Weapon
-```{r}
-dc21 %>%
-  count(race, weapon) %>%
-  filter(race == "Black or African American") %>%
-  gt() %>%
-  cols_align(
-    align = "left",
-    columns = race
-  ) %>%
-  cols_align(
-    align = "left",
-    columns = weapon
-  ) %>%
-   cols_label(
-    n = "Count",
-    weapon = "Weapon",
-    race = "Race"
-  )
-
-dc21 %>%
-  count(race, weapon) %>%
-  filter(race == "White") %>%
-  gt() %>%
-  cols_align(
-    align = "left",
-    columns = race
-  ) %>%
-  cols_align(
-    align = "left",
-    columns = weapon
-  ) %>%
-   cols_label(
-    n = "Count",
-    weapon = "Weapon",
-    race = "Race"
-  )
-```
-
-```{r}
-#| label: weapon-bar-chart
-
-p_weapon <- dc21 %>%
-  mutate(weapon = fct_rev(weapon)) %>%
-  group_by(race_new, weapon) %>%
-  summarise(count = n()) %>%
-  ggplot(aes(x = race_new, y = count, fill = weapon)) +
-  geom_col(position = "fill", width = .8) +
-  coord_flip() +
-  labs(title = "A higher proportion of African Americans were arrested\n  for firearm-related crimes than other races in DC",
-       caption = "Source: 2021 Uniform Crime Report data",
-      y = "",
-       x = "") +
-  theme_classic() +
+       caption = "Source: 2021 Uniform Crime Report Data")+
   theme(
-    title =element_text(size=10, face='bold'),
-    axis.line.x = element_blank(),
-    panel.grid.major.x = element_line(color = "gray60", 
-                                            size = 0.6,
-                                            linetype = "solid")) +
-  scale_x_discrete(limits = rev, 
-                   labels = c("Other Races", 
-                              "Blacks or African\nAmericans", 
-                              "Whites")) +
-  scale_y_continuous(expand = c(0,0),
-                     breaks = seq(0,1,.2),
-                     labels = scales::percent)  +
-  guides(fill = guide_legend(title = NULL)) +
-  scale_fill_manual(values=c("#e46aa7", "#46abdb", "#d2d2d2"))
+        strip.text.x = element_text(size = 12, 
+                                    color = "black", 
+                                    face = "bold"),
+        strip.background = element_blank(), 
+        strip.placement = "outside",
+        legend.position = "none",
+        legend.direction = "horizontal",
+        axis.line.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(face = "bold", size = 12), 
+        axis.text.y = element_blank()) +
+  scale_x_discrete(position="bottom") +
+  scale_fill_manual(values = c("#a2d4ec", "#1696d2")) +
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 700)) +
+  facet_wrap(vars(weapon), scales = "free_y") +
+  geom_text(mapping = aes(label = count),
+            size = 5,
+            vjust = -1) 
 
-p_weapon
-```
+p_weapon_months
+```  
+  
+### Coming Next
 
-
-## From EDA to Statistical Modeling 
-
-### Generalized Linear Regression 
-
-A generalized linear model with a binomial link function follows the equation $$log(\frac{\pi_i}{1-\pi_i}) = \beta_0 + \beta_1 x_i$$
+In the last post of this series, we will finish our data storytelling with the "How" piece and move to the last section - data modeling with general linear regression. Moreover, we will continue talking about how data can be useful in social science research. Stay tuned!
 
 ```{r}
-dc21_mod <-dc21 %>%
-  group_by(race, weapon, sex, age_group) %>%
-  summarise(count = n()) 
-
-mod <- glm(weapon~ race + age + sex, family = "binomial",
-           data = dc21)
-
-summary(mod) 
+sessioninfo::session_info()
 ```
 
 
-## At the End 
+```{r, eval=FALSE}
+ggsave(filename = "graph/weapon_stacked_bar_chart.png",
+        plot = p_weapon, 
+        width = 8, 
+        height = 6)
 
-Data doesn't imply objectivity. Statistics are commonly misused by politicians to support their propaganda. For example, people may rational the fact that officers arrested more Black people than any other racial groups in DC as Black people are more violent in nature. However, people who say that often failed to grasp the broader pictures behind those numbers: Compared to Whites and Asians, Black people are more likely to live in segregated and low-income areas, experience violence on daily basis, receive less support from the government, go to under-resourced schools, and be harmed by systematic racism. Crime is complex. A lot of factors could drive crimes. Behind those crime statistics are stories, people's stories, many of which are tragedies. Data science does not always bring cures to problems. It could be but the prerequisite of that is we treat data with an objective eye and interpret our results with the maximum extent of cautiousness. It's easy to make conclusions but words can harm. The real purpose of data science is that it helps us recognize the "what", which is the basic of any policy change.   
+ggsave(filename = "graph/race_waffle_chart.png",
+         plot = p_waffle, 
+         width = 8, 
+         height = 6)   
 
-```{r, include = FALSE}
-# ggsave(filename = "graph/weapon_stacked_bar_chart.png",
-#        plot = p_weapon, 
-#        width = 8, 
-#        height = 6)
+ggsave(filename = "graph/offense_line_chart.png",
+         plot = p_offense_by_time, 
+         width = 8, 
+         height = 6)
 
-# ggsave(filename = "graph/race_waffle_chart.png",
-#         plot = p_waffle, 
-#         width = 8, 
-#         height = 6)          
+ggsave(filename = "graph/faceted_bar_chart.png",
+         plot = p_weapon_months, 
+         width = 8, 
+         height = 6)
 ```
 
