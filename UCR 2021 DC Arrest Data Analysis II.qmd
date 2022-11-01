@@ -185,7 +185,7 @@ As human beings, we are naturally curious about the trend: how has the US GDP in
 
 I used a line chart to show the arrest frequency over 2021. Out of my expectation, arrests concentrated in the later summer and autumn of the year. Specifically, the arrest number in August was SEVEN times larger than the statistics of July. To put this into sense, the number of African American residents MPD officers arrested in August was approximately the sum of the number from January to July in total. The trend continued until the end of the year. 
 
-This is very different from what I imagined the curve would look like. I am interested in knowing if there is a reason that caused the spike in August. Is the weather to blame for it? Or is it because of a policy or social event in DC?
+This is very different from what I imagined the curve would look like. I am interested in knowing if there is a reason that caused a surge in August. Is the weather to blame for it? Or is it because of a policy or social event in DC?
 ```{r}
 #| label: line-graph-by-race
 
@@ -240,7 +240,7 @@ p_offense_by_time <- dc21 %>%
         axis.text.x =  element_text(face="bold")
      ) +
   labs(x = "", y = "", 
-       title = "A sudden increase in violent crimes in Augus led to a spike of police arrests",
+       title = "A sudden increase in violent crimes in Augus led to escalated police arrests",
        caption = "Source: 2021 Uniform Crime Report Data") +
   scale_y_continuous(expand = c(0, 5),
                      limits = c(0,550),
@@ -258,7 +258,7 @@ p_offense_by_time
 
 ### By Use of Weapon
 
-I also broke down the data by the use of weapons and found out that between July and August 2021, police arrests of unarmed civilians increased from 76 to 598, while firearm-involved arrests escalated from 2 to 121. This tells us that the spike in arrests spread between armed and unarmed cases. The use of guns does not explain the unexpected rising in criminal arrests. We may need to look for other reasons. From my perspective, I think the change is very likely provoked by an external incident. 
+I also broke down the data by the use of weapons and found out that between July and August 2021, police arrests of unarmed civilians increased from 76 to 598, while firearm-involved arrests escalated from 2 to 121. This tells us that the escalation in arrests were spread between armed and unarmed cases. The use of guns does not explain the unexpected rising in criminal arrests. We may need to look for other reasons. From my perspective, I think the change is very likely provoked by an external incident. 
 
 (note: Weapon group "weapon with a blade" is removed from this comparison because of its relatively smaller size)
 ```{r}
