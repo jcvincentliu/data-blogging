@@ -19,6 +19,7 @@ execute:
   message: false
 ---
 
+**Note**: This series is published by ***Towards AI*** On ***Medium***: [Link](https://pub.towardsai.net/part-final-fostering-social-impacts-with-data-science-c853e50d0379).
 
 ## The last piece of our picture: Wrapping Up
 

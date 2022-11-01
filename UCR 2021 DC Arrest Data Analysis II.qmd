@@ -19,6 +19,9 @@ execute:
   message: false
 ---
 
+
+**Note**: This series is published by ***Towards AI*** On ***Medium***: [Link:](https://pub.towardsai.net/fostering-social-impacts-with-data-science-part-ii-a73f5b90ebf5).
+
 ## An Analysis Continued 
 
 In the last blog post, we first-time met the UCR 2021 DC Arrest data. Now, we will see our new friend again with excitement. As I briefly touched on in our first conversation, I regard data science (EDA, statistical analysis, machine learning, etc.) as a lens or a window through which we can better see and understand our world and produce more effective solutions for important societal problems, like crimes and residential segregation. As a computational researcher, I developed my love for data from social science, and this special passion in both areas guided me to my own unique career path. For me, data science is a good tool but not the only one. We choose one research method based on the goal and audience of our analysis, as a result of which data-driven methods may not necessarily be better than qualitative, literature review, or community engagement methods. In fact, the more I study data science and the longer I stay in this community, the more I realized the need of including qualitative approaches. In so many projects, I see the great skills of the data analysts and how they care about the algorithms in the same time I see their insufficient domain knowledge, which frequently caused their wrong interpretations and decisions. 

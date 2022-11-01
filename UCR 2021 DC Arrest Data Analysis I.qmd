@@ -26,7 +26,7 @@ execute:
 
 ![Source:  FBI UCR Program NIBRS Page](NIPRS.JPG)
 
-This series is published by Towards AI On Medium. [Link:](https://medium.com/towards-artificial-intelligence/fostering-criminal-justice-with-data-science-part-i-be4cabdeb0a1).
+**Note**: This series is published by ***Towards AI*** On ***Medium***: [Link:](https://pub.towardsai.net/fostering-criminal-justice-with-data-science-part-i-be4cabdeb0a1).
 
 
 As a crime researcher, I am always intrigued by the questions of how many crimes were committed in a year and out of these crimes, how many arrests were made by officers. I explicitly mentioned arrests here because these two concepts are distinct in the sense that not all crimes resulted in an arrest. Most cases simply do not amount to the level of seriousness needed to validate an arrest for which should our attention is on behavioral biases of law enforcement agents (racial discrimination in policing), arrest usually is often a better metric.
