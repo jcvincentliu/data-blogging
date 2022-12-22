@@ -1,0 +1,195 @@
+---
+title: "Comprehensive ggplot Customization Guide"
+subtitle: "Making your graphs beautiful with `theme()`"
+author: "Vincent Liu"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+format: 
+    html:
+      toc: true
+      toc-title: "Table of Contents"
+      code-fold: true
+      code-tools: true
+      smooth-scroll: true
+      link-external-icon: true
+      link-external-newwindow: true
+    pdf:
+      toc: false
+      fig-cap-location: bottom
+      prefer-html: true
+execute:
+  warning: false
+  message: false
+---
+
+## Data Storytelling
+
+## What does `theme()` do
+
+```{r setup}
+#| echo: true
+#| eval: true
+#| warning: false
+#| message: false
+#| code-fold: true
+
+library(haven) # read SAS, STATA, SPSS files
+library(tidyverse)
+library(expss) # use data labels
+```
+
+
+```{r data}
+ssocs18 <- haven::read_sas("data/pu_ssocs18.sas7bdat")
+```
+
+```{r}
+strategy_18 <- 
+  use_labels(ssocs18, # use variable labels
+    ..data %>%  # under use_labels(), use ..data to refer to the same data
+      select(C0110:C0153) %>%   # filter out irrelevant variables
+      pivot_longer(C0110:C0153,  # into long format
+                   names_to = "Strategy",
+                   values_to = "Response") %>%
+      group_by(`Strategy`,# count #schools saying Y/N
+               Response) %>%
+      summarise(Number=n()) %>%
+      pivot_wider(names_from = Response,  # into wide format with Y & N in 2 cols
+                  values_from = Number) %>%
+      dplyr::rename("Yes"="1",  # renaming
+                    "No" = "2") %>%
+      mutate(`Percent` = # Percent adopting
+               round(
+                 Yes/(Yes+No),
+                 4)
+             )
+  ) %>%
+    arrange(-`Percent`) # rearranging
+
+strategy_18_simp <- 
+  strategy_18 %>%
+    ungroup() %>% # shouldn't be in grouping mode
+    filter(!row_number() %in% c(4:7,9,11,13,16:17,20:21)) # select strategies of interests
+
+strategy_names = as.list(strategy_18_simp$Strategy)
+
+strategy_18_simp <-
+  strategy_18_simp %>%
+  mutate(Strategy = factor(Strategy, 
+                           levels = strategy_names)) 
+strategy_18_simp
+```
+
+Re-coding school policies so that extra words will go into the second line. This makes our graphs compact.
+```{r}
+#x_lab = `School Violence Reduction Strategies`
+#y_lab = `Percent of Schools Adopting\n this Strategy (%)`
+
+strategy_18_simp2 <- strategy_18_simp %>%
+  mutate(Strategy = dplyr::recode(Strategy, 
+         `Prohibit non-academic use of cell phones or smartphones during school hours` = 
+           "Prohibit non-academic use of cell phones\n or smartphones during school hours",
+         
+        `Silent alarms or panic buttons directly connected to law enforcement` =
+          "Silent alarms or panic buttons directly\n connected to law enforcement",
+        
+        `School practice require visitor check in and badges`=
+          "School practice require visitor check-in\n and badges",
+        
+        `Building access controlled locked/monitored doors` = 
+          "Building access controlled\n locked/monitored doors",
+        
+        `Require students to wear badge or picture ID` = 
+          "Require students to wear badge\n or picture ID",
+        
+        `Have random metal detector checks on students` = 
+          "Have random metal detector checks\n on students"
+         )
+  )
+```
+
+```{r}
+p0 <- strategy_18_simp2 %>%
+    ggplot(aes(x = Strategy, y = Percent)) +
+    geom_point(size=2) +
+    geom_segment(aes(x = Strategy, xend = Strategy, 
+                     y = 0, yend = Percent),
+              size =1.3, color = "black") +
+    coord_flip() +
+    scale_x_discrete(limits=rev) +
+    scale_y_continuous(labels = scales::percent, 
+                       expand = c(0,0),
+                       limits = c(0,1.013),
+                       breaks = seq(0,1,.2)) 
+p0
+```
+
+
+
+Now making our final charts.
+```{r}
+p_lollipop <-
+  strategy_18_simp2 %>%
+    ggplot(aes(x = Strategy, y = Percent)) +
+    geom_point(size=2) +
+    geom_segment(aes(x = Strategy, xend = Strategy, 
+                     y = 0, yend = Percent),
+              size =1.3, color = "black") +
+    coord_flip() +
+    theme_classic() +
+    labs(y = "", x = "",
+         title = "Percent of K–12 Public Schools in the Nation Adopting Violence Reduction Strategies in 2018",
+         subtitle = "In 2018, a majority of public schools adopted some forms of anti-violence methods with requiring visitor\n check-in being the most prevalent (96%) one and checking for metal detectors being the least (7.6%).",
+         caption = "Source: 2017-2018 School Survey on Crime and Safety data, National Center for Education Statistics")+
+    scale_x_discrete(limits=rev) +
+    scale_y_continuous(labels = scales::percent, 
+                       expand = c(0,0),
+                       limits = c(0,1.013),
+                       breaks = seq(0,1,.2)) +
+    theme(
+   # text = element_text(family = "Georgia"),
+      plot.title = element_text(hjust = 1.1,  # move title along the line
+                                size = 11,
+                                margin = margin(b = 10)), # bottom margin
+      plot.subtitle = element_text(hjust = 1.5, size=9,
+                                   margin = margin(t = 0, b=10)),
+      plot.caption = element_text(hjust = 1.6, 
+                                  margin = margin(t = 0)), # no top margin
+      
+      plot.margin = unit(c(t=0.3,r=0.5,b=0.3,l=0), 
+                         "cm"),
+      axis.line = element_blank(), # no axis lines
+      axis.ticks = element_blank(), # no axis ticks
+      panel.grid.major.y = element_line(size=1.3, # no y (vertical) grid lines
+                                        lineend = "round"),
+      
+    )
+
+p_lollipop
+```
+
+```{r}
+#| include: false
+ggsave(filename = "figs/sscs_18_antiviolence_policy_lollipop.png",
+       plot = p_lollipop,
+      height = 6,
+       width = 8
+    )
+```
+
+
+## Reference Materials and Session Information
+
+* About Data Labels in R: See [this](https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html)
+
+
+```{r}
+sessioninfo::session_info()
+```
+
+```{r}
+#| include: false
+
+# Some References
+#Data Labels: https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html
+```
