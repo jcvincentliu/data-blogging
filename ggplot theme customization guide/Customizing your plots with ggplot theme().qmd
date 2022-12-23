@@ -1,6 +1,6 @@
 ---
-title: "Comprehensive ggplot Customization Guide"
-subtitle: "Making your graphs beautiful with `theme()`"
+title: "A Comprehensive Guide to Graph Customization in R"
+subtitle: "Making your graphs shine with `theme()`"
 author: "Vincent Liu"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 
@@ -22,10 +22,50 @@ execute:
   message: false
 ---
 
-## Data Storytelling
+## Why Visualizing Data and Why Customizing Visualizations
+
+Data visualization is an integral part of the day-to-day responsibilities of many data-relevant roles from data scientists to researchers and technical consultants. In these positions, charts (including maps) are used to communicate data findings with stakeholders and people with no background or comparative fluency in data science. Regardless the work is explorative analysis or machine learning, non-data professionals often care less about the process and more about the results as algorithms are hard to understand and can't be explained in a few words. Instead, they want to know the story. This is where visualizations excel compared to other forms, for example, pure writings and data notebooks.
+
+Depending on the position, the requirement and preferred visualization tools also vary. Data journalists often use D3, HTML, and related front-end languages. Because of the publication nature, charts made by data journalists are also more well-formatted and thoughtful than other professionals. According to a friend who once worked for the New York Times, the norm is to finalize a graph that we see on the website, the team would go through several rounds of editing behind the scenes on aspects from chart uses to  labels, colors, and grid lines. For researchers and analysts, the requirement may be less rigid, however, it can't be wrong that the more personalized a graph is, the better the visualization will look and the more compelling the story will be (There are also many data visualization theories, for example, the data-ink ratio concept developed by Edward Tufte. These theories can help us develop a better understanding of what data visualizations are great. Readers who are interested in them can do some research).
+
+As a computational social science researcher focusing on issues in criminal justice and K-12 education, I often favor R more than Python in projects due to two reasons: R's *tidyverse* system makes data cleaning a breeze and there is no single visualization library in Python that is as easy-to-use, customizable, and versatile than R's *ggplot2*.
+
+For ggplots, there yet exists an important question. Whereas creating simple charts is a piece of cake, we often struggle with customizing them as we wish. Think about how many times we have to search *How to xxx in ggplot* on Google. Surely there are many resources online, but there lacks a comprehensive guide to all ggplot customization solutions. As a package developed under the Grammar of Graphics, ggplot is an extremely organized and logical visualization library for which regardless of what we wish to do, there is a rule for that.
+
+This series will talk about some rules behind the "how-to". The first part (this one) centers around the *theme()* function. The next one will talk about scales. Throughout this series, I will use the [School Survey on Crime and Safety (SSOCS) data](https://nces.ed.gov/pubsearch/pubsinfo.asp?pubid=2020054) collected by the National Center for Education Statistics, which contains information about the US public schools' safety and disciplinary-related policies and practices, as examples.
 
 ## What does `theme()` do
 
+In R Studio, if you search the word "theme" in the help tab of the bottom-right panel (the place under the workspace environment in the standard layout), you will see two types of outputs: $\textit{theme}$ and $\textit{theme_*}$, where "*" indicates some words, for example, *theme_bw*. Before we dive into the former, it's important to understand the relationship between these two types. 
+
+Theme is a generalized version of $\textit{theme_*}$, and $\textit{theme_*}$ is built on $\textit{theme}$. $\textit{theme_*}$ represents numerous established themes contained in the ggplot2 package, for instance, the default theme, *theme_grey*, is one of them. The grey-grid layout in this theme is what you will see if you don't specify any theme elements or a certain theme module. In addition to theme_grey, the commonly used themes also include *theme_bw*, *theme_classic*, *theme_void*, and more. I personally am a fan of *theme_classic()*, which gives you a layout with a white background, two axes, and no grids in any direction. Additionally, developers and researchers have also compiled other theme templates used in news outlets, such as the Financial Times and FiveThirtyEight. These modules are spread in a variety of R packages, for example, *ggthemes*. You can see all the themes and what they look like on graphs on [this website](https://r-charts.com/ggplot2/themes/). 
+
+To summarize, $\textit{theme_*}$ is a theme with defined theme elements including margins, panel background, grids, axes, ticks, and legend layouts. It's important to note that even when a theme is applied, these elements are not un-overridable. To do so, we will need to manually tell our ggplot how we want the graph to look through the generalized *theme* function.
+
+
+![search theme in R Studio](figs\theme_searching_result.png, height= "50%")
+
+## The Marvelous Theme Function - Elements
+
+### What the theme function does
+
+As we have talked about, the numerous $\textit{theme_*}$ functions set predefined theme elements in a certain way. This is done through the use of the *theme()* function. As the [documentation page](https://ggplot2.tidyverse.org/reference/theme.html) described, *theme()* allows users to modify any theme components and offer a consistent look. The theme components here refer to a myriad of important aesthetic elements, such as axes, grids, tickmarks, fonts, margins, legends, and backgrounds. These are the non-data components of ggplot, meaning these elements don't decide the making of graphs. For example, you can't make a bar chart or a scatter plot with the function. You also can't modify the data with it. The function is meaningless, should you not have a graph. However, the real magic of this function is that it can make your already-built graph more beautiful by allowing you to customize the visual components. The same can also be done in *Matplotlib*, *Plotly*, *Alair*, and many other visualization packages. However, in those tools, these transformations are achieved through multiple functions or steps and are usually far more complex than ggplot's *theme()* with more lines of codes required. As an example, in *matplotlib*, if you want to remove the plot border frames, the simplest way is to first remove the top frame by setting `ax.spines['top'].set_visible(False)` and repeating the same to the other three frames. Whereas in ggplot, it's a one-liner (`panel.border = element_blank()`). As part of the ggplot universe, the *theme()* is also developed under the philosophy of grammar of graphics that was pondered by Hadley Wickham, making it as organized as other ggplot functions. That is to say, all components in this function follow a structure. 
+
+### Theme Function Structure
+
+Hadley Wickham explained the structure of the theme function as follows:
+
+$$\text{theme( element.name = element_function() )}$$
+
+Here, *theme.name* is the name of the theme element that we want to do the transformation on, and *element_function()* is the transformation we wish to apply to the data. There are over fifty detailed element names, which sounds like a lot but you don't really need to remember them because these element names can be classified into five large groups. These five groups are:
+
+1. axis
+2. legend
+3. panel
+4. plot
+5. strip
+
+We will talk about them one by one.
 ```{r setup}
 #| echo: true
 #| eval: true
@@ -34,13 +74,14 @@ execute:
 #| code-fold: true
 
 library(haven) # read SAS, STATA, SPSS files
-library(tidyverse)
+library(tidyverse) # tidyverse universe
 library(expss) # use data labels
 ```
 
 
 ```{r data}
-ssocs18 <- haven::read_sas("data/pu_ssocs18.sas7bdat")
+ssocs18 <- read_sas("data/pu_ssocs18.sas7bdat")
+ssocs08 <- read_sas("data/pu_ssocs08.sas7bdat")
 ```
 
 ```{r}
@@ -58,18 +99,18 @@ strategy_18 <-
                   values_from = Number) %>%
       dplyr::rename("Yes"="1",  # renaming
                     "No" = "2") %>%
+      mutate(Year = "2017-2018", .before = Strategy) %>%
       mutate(`Percent` = # Percent adopting
                round(
                  Yes/(Yes+No),
                  4)
-             )
-  ) %>%
-    arrange(-`Percent`) # rearranging
+             )) %>%
+    ungroup() # exit grouping
 
 strategy_18_simp <- 
   strategy_18 %>%
-    ungroup() %>% # shouldn't be in grouping mode
-    filter(!row_number() %in% c(4:7,9,11,13,16:17,20:21)) # select strategies of interests
+    arrange(-`Percent`) %>% # rearranging
+    filter(!row_number() %in% c(4:7,9,11,13,16:17,20)) # select strategies of interests
 
 strategy_names = as.list(strategy_18_simp$Strategy)
 
@@ -106,21 +147,18 @@ strategy_18_simp2 <- strategy_18_simp %>%
           "Have random metal detector checks\n on students"
          )
   )
+
 ```
 
 ```{r}
 p0 <- strategy_18_simp2 %>%
     ggplot(aes(x = Strategy, y = Percent)) +
-    geom_point(size=2) +
+    geom_point(size=2, color = "steelblue") +
     geom_segment(aes(x = Strategy, xend = Strategy, 
                      y = 0, yend = Percent),
-              size =1.3, color = "black") +
+              size =1.3, color = "steelblue") +
     coord_flip() +
-    scale_x_discrete(limits=rev) +
-    scale_y_continuous(labels = scales::percent, 
-                       expand = c(0,0),
-                       limits = c(0,1.013),
-                       breaks = seq(0,1,.2)) 
+    scale_x_discrete(limits=rev)
 p0
 ```
 
@@ -131,15 +169,15 @@ Now making our final charts.
 p_lollipop <-
   strategy_18_simp2 %>%
     ggplot(aes(x = Strategy, y = Percent)) +
-    geom_point(size=2) +
+    geom_point(size=2, color = "steelblue") +
     geom_segment(aes(x = Strategy, xend = Strategy, 
                      y = 0, yend = Percent),
-              size =1.3, color = "black") +
+              size =1.3, color = "steelblue") +
     coord_flip() +
     theme_classic() +
     labs(y = "", x = "",
-         title = "Percent of K–12 Public Schools in the Nation Adopting Violence Reduction Strategies in 2018",
-         subtitle = "In 2018, a majority of public schools adopted some forms of anti-violence methods with requiring visitor\n check-in being the most prevalent (96%) one and checking for metal detectors being the least (7.6%).",
+         title = "Percent of Nationwide K–12 Public Schools Adopting Violence Reduction Strategies in 2018",
+         subtitle = "In 2018, a majority of public schools adopted some forms of anti-violence methods with requiring visitor\n check-in being the most prevalent one (96%) and checking for metal detectors being the least (7.6%).",
          caption = "Source: 2017-2018 School Survey on Crime and Safety data, National Center for Education Statistics")+
     scale_x_discrete(limits=rev) +
     scale_y_continuous(labels = scales::percent, 
@@ -147,9 +185,10 @@ p_lollipop <-
                        limits = c(0,1.013),
                        breaks = seq(0,1,.2)) +
     theme(
-   # text = element_text(family = "Georgia"),
-      plot.title = element_text(hjust = 1.1,  # move title along the line
+      text = element_text(family="serif"),
+      plot.title = element_text(hjust = 1,  # move title along the line
                                 size = 11,
+                                face = "bold",
                                 margin = margin(b = 10)), # bottom margin
       plot.subtitle = element_text(hjust = 1.5, size=9,
                                    margin = margin(t = 0, b=10)),
@@ -160,7 +199,7 @@ p_lollipop <-
                          "cm"),
       axis.line = element_blank(), # no axis lines
       axis.ticks = element_blank(), # no axis ticks
-      panel.grid.major.y = element_line(size=1.3, # no y (vertical) grid lines
+      panel.grid.major.y = element_line(size=1.3, # add x (horizontal) grid lines
                                         lineend = "round"),
       
     )
@@ -168,28 +207,104 @@ p_lollipop <-
 p_lollipop
 ```
 
+
 ```{r}
-#| include: false
+strategy_08 <- 
+  use_labels(ssocs08, # use variable labels
+    ..data %>%  # under use_labels(), use ..data to refer to the same data
+      select(C0110:C0150) %>%   # filter out irrelevant variables
+      pivot_longer(C0110:C0150,  # into long format
+                   names_to = "Strategy",
+                   values_to = "Response") %>%
+      group_by(`Strategy`,# count #schools saying Y/N
+               Response) %>%
+      summarise(Number=n()) %>%
+      pivot_wider(names_from = Response,  # into wide format with Y & N in 2 cols
+                  values_from = Number) %>%
+      dplyr::rename("Yes"="1",  # renaming
+                    "No" = "2") %>%
+      mutate(Year = "2007-2008", 
+             .before = Strategy) %>%
+      mutate(`Percent` = # Percent adopting
+               round(
+                 Yes/(Yes+No),
+                 4))) %>%
+    ungroup()
+```
+
+
+```{r}
+
+# Here, I index on both data because the policies included in the two years' surveys do not match each other. Some questions were asked in 2008 but not 2018, and some were only asked in 2018. With indexing, I am able to create a data that included information about the same safety policies in these two years. 
+
+# Sometimes base R functions are just easier, so there is no need to straightly use tidyverse
+strategy_08_dotchart <- strategy_08[c(1:3, 5:9, 11:13, 16:22),] 
+strategy_18_dotchart <- strategy_18[c(1,3:6, 8:19,21),]
+
+strategy_18_dotchart$Strategy <- strategy_08_dotchart$Strategy
+
+strategy_08_18_dotchart <- 
+  bind_rows(strategy_08_dotchart,
+            strategy_18_dotchart) %>%
+  arrange(Strategy) %>% # arrange by strategies
+  slice(1:2,5:6,19:20,23:24, 33:36) # select policies relevant to                                                      # school-to-prison pipeline/the       
+                                    # school surveillance system
+```
+
+
+```{r}
+strategy_08_18_dotchart  %>%
+  ggplot(aes(x = Strategy, y = Percent)) +
+  geom_line(aes(group = Strategy)) +
+  geom_point(aes(color = Year)) +
+  theme_classic() +
+  coord_flip() +
+  labs(
+    x = NULL,
+    y = NULL
+  ) +
+  scale_y_continuous(labels = scales::percent, 
+                       expand = c(0,0),
+                       limits = c(0,1.013),
+                       breaks = seq(0,1,0.2)) +
+  theme(
+    axis.ticks = element_blank(),
+    axis.line.y = element_blank(),
+    legend.position = "top",
+    legend.spacing = unit(5, "cm")
+  ) 
+  
+```
+
+
+Saving data and charts:
+```{r}
+#| eval: false
 ggsave(filename = "figs/sscs_18_antiviolence_policy_lollipop.png",
        plot = p_lollipop,
       height = 6,
        width = 8
     )
+
+ggsave(filename = "figs/raw_lollipop_for_illustration.png",
+       plot = p0,
+      height = 6,
+       width = 8
+    )
+
+write_csv(strategy_18_simp2,
+          "data/output_18ssocs_10anti-violencepolicy.csv")
 ```
 
 
-## Reference Materials and Session Information
+## Additional Materials and Session Information
 
-* About Data Labels in R: See [this](https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html)
-
+* About Data Labels in R: See [this article](https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html)
+* About Lollipop Charts: See [this guide](http://uc-r.github.io/lollipop)
+* About Cleverland Dot Charts: See [this guide](https://uc-r.github.io/cleveland-dot-plots)
+* About SSOCS data: See [this website](https://nces.ed.gov/surveys/ssocs/) 
 
 ```{r}
 sessioninfo::session_info()
 ```
 
-```{r}
-#| include: false
-
-# Some References
-#Data Labels: https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html
-```

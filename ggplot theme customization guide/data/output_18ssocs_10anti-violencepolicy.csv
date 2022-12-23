@@ -1,0 +1,17 @@
+Strategy,Yes,No,Percent
+"School practice require visitor check-in
+ and badges",2662,100,0.9638
+"Building access controlled
+ locked/monitored doors",2598,164,0.9406
+Security camera(s) monitor the school,2464,298,0.8921
+Provide school lockers to students,1793,969,0.6492
+"Prohibit non-academic use of cell phones
+ or smartphones during school hours",1736,1026,0.6285
+Practice to enforce a strict dress code,1503,1259,0.5442
+Random sweeps for contraband,1261,1501,0.4566
+"Silent alarms or panic buttons directly
+ connected to law enforcement",886,1876,0.3208
+"Require students to wear badge
+ or picture ID",375,2387,0.1358
+"Have random metal detector checks
+ on students",211,2551,0.0764

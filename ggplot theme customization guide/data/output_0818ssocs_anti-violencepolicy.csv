@@ -1,0 +1,21 @@
+Year,Strategy,Yes,No,Percent
+2007-2008,"Access controlled locked/monitored
+ doors",2262,298,0.8836
+2017-2018,"Access controlled locked/monitored
+ doors",2598,164,0.9406
+2007-2008,"Have random metal detector checks
+ on students",229,2331,0.0895
+2017-2018,"Have random metal detector checks
+ on students",211,2551,0.0764
+2007-2008,"Random sweeps for contraband
+ not including dog sniffs",476,2084,0.1859
+2017-2018,"Random sweeps for contraband
+ not including dog sniffs",1261,1501,0.4566
+2007-2008,"Require drug testing for students
+ in extra-curricular activities",163,2397,0.0637
+2017-2018,"Require drug testing for students
+ in extra-curricular activities",376,2386,0.1361
+2007-2008,Security camera(s) monitor the school,1708,852,0.6672
+2017-2018,Security camera(s) monitor the school,2464,298,0.8921
+2007-2008,Students pass through metal detectors,65,2495,0.0254
+2017-2018,Students pass through metal detectors,90,2672,0.0326
