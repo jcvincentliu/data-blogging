@@ -190,15 +190,16 @@ p_lollipop <-
                                 size = 11,
                                 face = "bold",
                                 margin = margin(b = 10)), # bottom margin
-      plot.subtitle = element_text(hjust = 1.5, size=9,
+      plot.subtitle = element_text(size=9, face = "italic",
                                    margin = margin(t = 0, b=10)),
-      plot.caption = element_text(hjust = 1.6, 
+      plot.caption = element_text(hjust = 0, size =9,
                                   margin = margin(t = 0)), # no top margin
       
       plot.margin = unit(c(t=0.3,r=0.5,b=0.3,l=0), 
                          "cm"),
       axis.line = element_blank(), # no axis lines
       axis.ticks = element_blank(), # no axis ticks
+      axis.text.y = element_text(face = "bold"), # bold axis labels
       panel.grid.major.y = element_line(size=1.3, # add x (horizontal) grid lines
                                         lineend = "round"),
       
@@ -247,34 +248,108 @@ strategy_08_18_dotchart <-
   bind_rows(strategy_08_dotchart,
             strategy_18_dotchart) %>%
   arrange(Strategy) %>% # arrange by strategies
-  slice(1:2,5:6,19:20,23:24, 33:36) # select policies relevant to                                                      # school-to-prison pipeline/the       
-                                    # school surveillance system
+  slice(1:2,5:6,19:20, 23:24, 33:36) %>% # select policies relevant to                                                      # school-to-prison pipeline/the       
+                                        # school surveillance system
+  mutate(Strategy = dplyr::recode(
+    Strategy,
+      `Have random metal detector checks on students` = 
+      "Have random metal detector checks\n on students",
+      `Random sweeps for contraband not including dog sniffs` = 
+      "Random sweeps for contraband\n not including dog sniffs",
+      `Require drug testing for students in extra-curricular activities`=
+      "Require drug testing for students\n in extra-curricular activities",
+      `Access controlled locked/monitored doors` = 
+      "Access controlled locked/monitored\n doors"
+    
+                                  ))
+
+
 ```
 
 
 ```{r}
-strategy_08_18_dotchart  %>%
-  ggplot(aes(x = Strategy, y = Percent)) +
-  geom_line(aes(group = Strategy)) +
-  geom_point(aes(color = Year)) +
-  theme_classic() +
-  coord_flip() +
-  labs(
-    x = NULL,
-    y = NULL
-  ) +
-  scale_y_continuous(labels = scales::percent, 
-                       expand = c(0,0),
-                       limits = c(0,1.013),
-                       breaks = seq(0,1,0.2)) +
-  theme(
-    axis.ticks = element_blank(),
-    axis.line.y = element_blank(),
-    legend.position = "top",
-    legend.spacing = unit(5, "cm")
-  ) 
-  
+p_dotchart <-
+  strategy_08_18_dotchart  %>%
+    ggplot(aes(x = Strategy, y = Percent)) +
+    geom_line(aes(group = Strategy), size = 1.2, alpha =.8) +
+    geom_point(aes(color = Year), size = 3, alpha =.8) +
+    theme_classic() +
+    coord_flip() +
+    labs(
+      title = "Prevalency of Six Anti-Violence Policies Among Over 2K \nUS Public Schools in 2008 and 2018",
+      subtitle = "Compared to 10 years ago, public schools in 2018 were more likely to use some forms of survelliance\n methods to ensure students are in place. This was especially the case for sweeping for contrabands\n and installing school cameras, the prevalency of which increased for over 20 percent. In both years,\n accessing controlled locked doors was the most popular policy with an adoption rate of 90ish percent.",
+      caption = "Data: School Survey on Crime and Safety, National Center for Education Statistics",
+      x = NULL,
+      y = NULL
+    ) +
+    scale_x_discrete(limits = rev) +
+    scale_y_continuous(labels = scales::percent, 
+                         expand = c(0,0),
+                         limits = c(0,1.013),
+                         breaks = seq(0,1,0.2)) +
+    scale_colour_manual(values = c("#73bfe2", "#12719e")) +
+    theme(
+      text = element_text(family = "serif"),
+      axis.ticks = element_blank(),
+      axis.line.y = element_blank(),
+      legend.title = element_blank(),
+      legend.margin = margin(0,0,-.7,0, "cm"),
+      legend.position = "top",
+      legend.spacing = unit(10, "cm"),
+      plot.margin = unit(c(t=0.3,r=0.5,b=0.3,l=0), 
+                           "cm"),
+      panel.grid.major.y = element_line(linetype = "solid", 
+                                        size = .8,
+                                        lineend = "round",
+                                      # color = "grey90"
+                                      ),
+      axis.text.y = element_text(face = "bold",
+                                 margin = margin(t = .2, r = 0,
+                                                  b = .2, l = 0, 
+                                                   "cm")), 
+      plot.title = element_text(hjust = .5, face = "bold"),
+      plot.subtitle = element_text(size =10, face = "italic",
+                                   margin = margin(t = .2, r = .2,
+                                                   b = .3, l = 0, 
+                                                   "cm")),
+      plot.caption = element_text(hjust = 0, size = 10,
+                                    margin = margin(t = .4, r = 0,
+                                                    b = 0, l = 0,
+                                                    "cm"))
+    )
+
+p_dotchart
 ```
+
+```{r}
+p_dotchart_labelled <-
+  p_dotchart + 
+    geom_text(data = strategy_08_18_dotchart %>% slice(-c(3:4,11:12)),
+              aes(color = Year, 
+                  label = paste0(round(Percent*100), "%")),
+              size = 3, 
+              vjust = 2,
+              nudge_x = -.1
+              ) +
+    geom_text(data = strategy_08_18_dotchart %>% slice(c(3)),
+              aes(color = Year, 
+                  label = paste0("-1.3%")),
+              size = 3, 
+              hjust = -.4,
+              vjust = -.8
+
+              ) +
+  geom_text(data = strategy_08_18_dotchart %>% slice(c(12)),
+              aes(color = Year, 
+                  label = paste0("+0.7%")),
+              size = 3, 
+              hjust = -.4,
+              vjust = -.8
+              )
+
+p_dotchart_labelled
+```
+
 
 
 Saving data and charts:
@@ -282,7 +357,19 @@ Saving data and charts:
 #| eval: false
 ggsave(filename = "figs/sscs_18_antiviolence_policy_lollipop.png",
        plot = p_lollipop,
-      height = 6,
+      height = 4.5,
+       width = 8
+    )
+
+ggsave(filename = "figs/sscs_08_18_antiviolence_policy_dotchart.png",
+       plot = p_dotchart,
+      height = 5.2,
+       width = 8
+    )
+
+ggsave(filename = "figs/sscs_08_18_antiviolence_policy_dotchart_labelled.png",
+       plot = p_dotchart_labelled,
+      height = 5,
        width = 8
     )
 
@@ -294,6 +381,9 @@ ggsave(filename = "figs/raw_lollipop_for_illustration.png",
 
 write_csv(strategy_18_simp2,
           "data/output_18ssocs_10anti-violencepolicy.csv")
+
+write_csv(strategy_08_18_dotchart,
+          "data/output_0818ssocs_anti-violencepolicy.csv")
 ```
 
 
