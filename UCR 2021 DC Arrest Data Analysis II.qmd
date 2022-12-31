@@ -20,7 +20,7 @@ execute:
 ---
 
 
-**Note**: This series is published by ***Towards AI*** On ***Medium***: [Link:](https://pub.towardsai.net/fostering-social-impacts-with-data-science-part-ii-a73f5b90ebf5).
+**Note**: This series is published by ***Towards AI*** on ***Medium***: [Link:](https://pub.towardsai.net/fostering-social-impacts-with-data-science-part-ii-a73f5b90ebf5).
 
 ## An Analysis Continued 
 
