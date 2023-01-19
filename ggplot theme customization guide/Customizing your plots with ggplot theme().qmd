@@ -22,6 +22,7 @@ execute:
   message: false
 ---
 
+<!--
 ## Why Visualizing Data and Why Customizing Visualizations
 
 Data visualization is an integral part of the day-to-day responsibilities of many data-relevant roles from data scientists to researchers and technical consultants. In these positions, charts (including maps) are used to communicate data findings with stakeholders and people with no background or comparative fluency in data science. Regardless the work is explorative analysis or machine learning, non-data professionals often care less about the process and more about the results as algorithms are hard to understand and can't be explained in a few words. Instead, they want to know the story. This is where visualizations excel compared to other forms, for example, pure writings and data notebooks.
@@ -66,6 +67,13 @@ Here, *theme.name* is the name of the theme element that we want to do the trans
 5. strip
 
 We will talk about them one by one.
+
+
+--> 
+
+## Appendix - Data Processing and Visualization
+ 
+### Loading Data
 ```{r setup}
 #| echo: true
 #| eval: true
@@ -84,6 +92,7 @@ ssocs18 <- read_sas("data/pu_ssocs18.sas7bdat")
 ssocs08 <- read_sas("data/pu_ssocs08.sas7bdat")
 ```
 
+### Cleaning Data
 ```{r}
 strategy_18 <- 
   use_labels(ssocs18, # use variable labels
@@ -150,6 +159,9 @@ strategy_18_simp2 <- strategy_18_simp %>%
 
 ```
 
+### Data Visualization
+
+#### Raw Graph
 ```{r}
 p0 <- strategy_18_simp2 %>%
     ggplot(aes(x = Strategy, y = Percent)) +
@@ -164,7 +176,7 @@ p0
 
 
 
-Now making our final charts.
+#### Lollipop Graph
 ```{r}
 p_lollipop <-
   strategy_18_simp2 %>%
@@ -208,7 +220,9 @@ p_lollipop <-
 p_lollipop
 ```
 
+#### Dot Chart
 
+More Data Cleaning
 ```{r}
 strategy_08 <- 
   use_labels(ssocs08, # use variable labels
@@ -266,7 +280,7 @@ strategy_08_18_dotchart <-
 
 ```
 
-
+The Graph:
 ```{r}
 p_dotchart <-
   strategy_08_18_dotchart  %>%
@@ -321,6 +335,7 @@ p_dotchart <-
 p_dotchart
 ```
 
+Adding labels to the Cleverland Dot Chart
 ```{r}
 p_dotchart_labelled <-
   p_dotchart + 
@@ -352,7 +367,7 @@ p_dotchart_labelled
 
 
 
-Saving data and charts:
+## Saving data and charts:
 ```{r}
 #| eval: false
 ggsave(filename = "figs/sscs_18_antiviolence_policy_lollipop.png",
