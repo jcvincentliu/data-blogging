@@ -185,6 +185,7 @@ t %>%
         panel.grid.major.y = element_line(linetype="solid", # add grid line
                                           color = "grey",
                                           size =0.6),
+        axis.ticks = element_blank(),
         axis.ticks.x = element_blank(),
         text = element_text(family = "serif"), # format texts
         plot.title = element_text(size = 12, 
