@@ -1,0 +1,159 @@
+"","Strategy","Violent Incident Group","Count","Percent"
+"1","School practice require visitor
+ check-in and badges","No 
+violent
+ incidents",415,0.1559
+"2","School practice require visitor
+ check-in and badges","Between 
+1 and 5
+ violent
+ incidents",685,0.2573
+"3","School practice require visitor
+ check-in and badges","Between 
+5 and 20
+ violent
+ incidents",950,0.3569
+"4","School practice require visitor
+ check-in and badges","Over 20
+ violent
+ incidents",612,0.2299
+"5","Building access controlled
+ locked/monitored doors","No 
+violent
+ incidents",417,0.1605
+"6","Building access controlled
+ locked/monitored doors","Between 
+1 and 5
+ violent
+ incidents",673,0.259
+"7","Building access controlled
+ locked/monitored doors","Between 
+5 and 20
+ violent
+ incidents",915,0.3522
+"8","Building access controlled
+ locked/monitored doors","Over 20
+ violent
+ incidents",593,0.2283
+"9","Security camera(s) monitor
+ the school","No 
+violent
+ incidents",359,0.1457
+"10","Security camera(s) monitor
+ the school","Between 
+1 and 5
+ violent
+ incidents",639,0.2593
+"11","Security camera(s) monitor
+ the school","Between 
+5 and 20
+ violent
+ incidents",895,0.3632
+"12","Security camera(s) monitor
+ the school","Over 20
+ violent
+ incidents",571,0.2317
+"13","Prohibit non-academic use of 
+cell phones during school hours","No 
+violent
+ incidents",314,0.1809
+"14","Prohibit non-academic use of 
+cell phones during school hours","Between 
+1 and 5
+ violent
+ incidents",469,0.2702
+"15","Prohibit non-academic use of 
+cell phones during school hours","Between 
+5 and 20
+ violent
+ incidents",588,0.3387
+"16","Prohibit non-academic use of 
+cell phones during school hours","Over 20
+ violent
+ incidents",365,0.2103
+"17","Practice to enforce a 
+strict dress code","No 
+violent
+ incidents",193,0.1284
+"18","Practice to enforce a 
+strict dress code","Between 
+1 and 5
+ violent
+ incidents",380,0.2528
+"19","Practice to enforce a 
+strict dress code","Between 
+5 and 20
+ violent
+ incidents",563,0.3746
+"20","Practice to enforce a 
+strict dress code","Over 20
+ violent
+ incidents",367,0.2442
+"21","Provide a structured anonymous
+ threat reporting system","No 
+violent
+ incidents",207,0.1316
+"22","Provide a structured anonymous
+ threat reporting system","Between 
+1 and 5
+ violent
+ incidents",376,0.239
+"23","Provide a structured anonymous
+ threat reporting system","Between 
+5 and 20
+ violent
+ incidents",593,0.377
+"24","Provide a structured anonymous
+ threat reporting system","Over 20
+ violent
+ incidents",397,0.2524
+"25","Random sweeps for contraband","No 
+violent
+ incidents",93,0.0738
+"26","Random sweeps for contraband","Between 
+1 and 5
+ violent
+ incidents",332,0.2633
+"27","Random sweeps for contraband","Between 
+5 and 20
+ violent
+ incidents",508,0.4029
+"28","Random sweeps for contraband","Over 20
+ violent
+ incidents",328,0.2601
+"29","Silent alarms or panic buttons
+ directly connected to law enforcement","No 
+violent
+ incidents",147,0.1659
+"30","Silent alarms or panic buttons
+ directly connected to law enforcement","Between 
+1 and 5
+ violent
+ incidents",232,0.2619
+"31","Silent alarms or panic buttons
+ directly connected to law enforcement","Between 
+5 and 20
+ violent
+ incidents",332,0.3747
+"32","Silent alarms or panic buttons
+ directly connected to law enforcement","Over 20
+ violent
+ incidents",175,0.1975
+"33","Have random metal detector
+ checks on students","No 
+violent
+ incidents",23,0.109
+"34","Have random metal detector
+ checks on students","Between 
+1 and 5
+ violent
+ incidents",38,0.1801
+"35","Have random metal detector
+ checks on students","Between 
+5 and 20
+ violent
+ incidents",72,0.3412
+"36","Have random metal detector
+ checks on students","Over 20
+ violent
+ incidents",78,0.3697
