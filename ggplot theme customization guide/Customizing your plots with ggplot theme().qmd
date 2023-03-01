@@ -95,7 +95,8 @@ ssocs08 <- read_sas("data/pu_ssocs08.sas7bdat")
 ### Cleaning Data
 ```{r}
 strategy_18 <- 
-  use_labels(ssocs18, # use variable labels
+  use_labels(
+  ssocs18, # use variable labels
     ..data %>%  # under use_labels(), use ..data to refer to the same data
       select(C0110:C0153) %>%   # filter out irrelevant variables
       pivot_longer(C0110:C0153,  # into long format
